@@ -100,7 +100,7 @@ void print_m (std::vector< std::vector<int> > m, int d)
 	{
         for (int j = 0; j < d; j++) 
         {
-             std::cout << "\t" << m[i][j];
+            std::cout << "\t" << m[i][j];
         }
         std::cout << std::endl;
     }
@@ -238,23 +238,23 @@ void strassen (	std::vector< std::vector<int> > &A,
         **********************************************/
 
 		// calculating C11
-       	add(M1, M4, result1, new_d);
-       	add(result1, M7, result2, new_d);
-       	subtract(result2, M5, C11, new_d);
+        add(M1, M4, result1, new_d);
+        add(result1, M7, result2, new_d);
+        subtract(result2, M5, C11, new_d);
 
        	// calculating C12
-       	add(M3, M5, C12, new_d);
+        add(M3, M5, C12, new_d);
 
        	// calculating C21
-       	add(M2, M4, C21, new_d);
+        add(M2, M4, C21, new_d);
 
        	// calculating C22
-       	subtract(M1, M2, result1, new_d);
-       	add(M3, M6, result2, new_d);
-       	add(result1, result2, C22, new_d);
+        subtract(M1, M2, result1, new_d);
+        add(M3, M6, result2, new_d);
+        add(result1, result2, C22, new_d);
 
        	// add the resulting matrices in one matrix
-       	join(C11, C, 0 , 0, new_d);
+        join(C11, C, 0 , 0, new_d);
         join(C12, C, 0 , new_d, new_d);
         join(C21, C, new_d, 0, new_d);
         join(C22, C, new_d, new_d, new_d);
@@ -264,92 +264,90 @@ void strassen (	std::vector< std::vector<int> > &A,
 /********************************************************************
 ************************* Main Function *****************************
 ********************************************************************/
-
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-	// ensure proper usage
-	if (argc != 4)
-	{
-		std::cout << "Usage: ./strassen 0 dimension inputfile\n";
-		return 1;
-	}
+    // Ensure proper usage
+    if (argc != 4){
+        std::cout << "Usage: ./strassen 0 dimension inputfile\n";
+        return 1;
+    }
 
-	// ensure no negative dimensions of the array
-	dim = atoi(argv[2]);
-	if (dim < 1)
-	{
-		std::cout << "Dimension has to be greater than 0.\n";
-		return 2;
-	}
+    // Ensure no negative dimensions of the array
+    dim = atoi(argv[2]);
+    if (dim < 1)
+    {
+        std::cout << "Dimension has to be greater than 0.\n";
+        return 2;
+    }
 
-	// set the crossover
-	crossover = 86;
+    // Set the crossover
+    crossover = 86;
 
-	// vector for the inside of the matrices
-	std::vector<int> inside (dim);
+    // Vector for the inside of the matrices
+    std::vector<int> inside(dim);
 
-	// initialize matrices to be multiplied
-	std::vector< std::vector<int> > A (dim, inside);
-	std::vector< std::vector<int> > B (dim, inside);
-	std::vector< std::vector<int> > C (dim, inside);
+    // Initialize matrices to be multiplied
+    std::vector<std::vector<int>> A(dim, inside);
+    std::vector<std::vector<int>> B(dim, inside);
+    std::vector<std::vector<int>> C(dim, inside);
 
+    // Open and read from the file
+    std::ifstream infile(argv[3]);
 
-	// intialize how many lines we will be scanning
-	int size_file = dim*dim*2;
+    // Check if file opened
+    if (infile.is_open())
+    {
+        std::string line;
+        // Leemos las dimensiones de la matriz B
+        int rowsA, colsA;
+        infile >> rowsA >> colsA;
 
-	// open and read from the file
-	std::ifstream infile(argv[3]);
+        // Leemos la Matriz A
+        for (int i = 0; i < rowsA; i++)
+        {
+            for (int j = 0; j < colsA; j++)
+            {
+                infile >> A[i][j];
+            }
+        }
 
-	// check if file opened
-	if (infile.is_open())
-	{
-		// each line in the file is a string
-		std::string line;
+        // Nos saltamos la linea vacia
+        infile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-		// iterate over lines of file and add them to matrices A,B
-		for (int i = 0, j = 0; i < size_file; i++)
-		{
-			getline (infile, line);
-			if (i < (dim*dim))
-			{
-				A[i/dim][i%dim] = std::stoi(line);
-			}
-			else 
-			{
-				B[j/dim][i%dim] = std::stoi(line);
-				j++;
-			}
-		}
-	}
-	else
-	{
-		perror("Something went wrong; couldn't open file.\n");
-		return 3;
-	}
+        // Leemos las dimensiones de la matriz B
+        int rowsB, colsB;
+        infile >> rowsB >> colsB;
 
-	// namespace for timing function
-	using namespace std::chrono;
-	
-	// time functions
-	/*    high_resolution_clock::time_point start1 = high_resolution_clock::now();	   
-	**	  multiply(A, B, C, dim);
-	**    high_resolution_clock::time_point end1 = high_resolution_clock::now();
-	**    auto duration1 = duration_cast<microseconds>(end1 - start1).count();
-	**    std::cout << "This took: "<< duration1 << " microseconds.\n";
-	**/
+        // Leemos la Matriz B
+        for (int i = 0; i < rowsB; i++)
+        {
+            for (int j = 0; j < colsB; j++)
+            {
+                infile >> B[i][j];
+            }
+        }
+    }
+    else
+    {
+        perror("Something went wrong; couldn't open file.\n");
+        return 3;
+    }
 
-	/*    high_resolution_clock::time_point start2 = high_resolution_clock::now();	   
-	**	  strassen(A, B, C, dim);
-	**	  high_resolution_clock::time_point end2 = high_resolution_clock::now();
-	**    auto duration2 = duration_cast<microseconds>(end2 - start2).count();
-	**    std::cout<< "This took: " << duration2 << " microseconds.\n";
-	**/
+    // Namespace for timing function
+    using namespace std::chrono;
 
-	// run strassen
-	strassen(A, B, C, dim);
+    // Time functions
+    high_resolution_clock::time_point start1 = high_resolution_clock::now();
+    multiply(A, B, C, dim);
+    high_resolution_clock::time_point end1 = high_resolution_clock::now();
+    auto duration1 = duration_cast<microseconds>(end1 - start1).count();
+    std::cout << "This took: " << duration1 << " microseconds.\n";
+    
+    high_resolution_clock::time_point start2 = high_resolution_clock::now();
+    strassen(A, B, C, dim);
+    high_resolution_clock::time_point end2 = high_resolution_clock::now();
+    auto duration2 = duration_cast<microseconds>(end2 - start2).count();
+    std::cout << "This took: " << duration2 << " microseconds.\n";
 
-    // print the matrix
-    print_diag (C, dim);
-
-   	return 0;
+    return 0;
 }
