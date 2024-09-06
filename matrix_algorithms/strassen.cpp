@@ -337,11 +337,14 @@ int main(int argc, char* argv[])
     using namespace std::chrono;
 
     // Time functions
-    high_resolution_clock::time_point start1 = high_resolution_clock::now();
-    multiply(A, B, C, dim);
-    high_resolution_clock::time_point end1 = high_resolution_clock::now();
-    auto duration1 = duration_cast<microseconds>(end1 - start1).count();
-    std::cout << "This took: " << duration1 << " microseconds.\n";
+    
+    /*  
+        high_resolution_clock::time_point start1 = high_resolution_clock::now();
+        multiply(A, B, C, dim);
+        high_resolution_clock::time_point end1 = high_resolution_clock::now();
+        auto duration1 = duration_cast<microseconds>(end1 - start1).count();
+        std::cout << "This took: " << duration1 << " microseconds.\n";
+    */
     
     high_resolution_clock::time_point start2 = high_resolution_clock::now();
     strassen(A, B, C, dim);

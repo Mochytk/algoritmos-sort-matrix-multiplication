@@ -52,13 +52,15 @@ def main():
     A,B = leer_matrices_desde_archivo("entrada.txt")
     filasA = len(A)
     columnasB = len(B[0])
+    # Inicializar la matriz C con ceros
     C = [[0 for _ in range(columnasB)] for _ in range(filasA)]
+    # Definir una función wrapper para llamar a multiplicar_matrices_opti con argumentos
     def wrapper():
         multiplicar_matrices_opti(A, B, C)
-    multiplicar_matrices_opti(A, B, C)
+    # Medir el tiempo de ejecución
     t_total = timeit.timeit(wrapper, number=1)
-    
-    print(t_total)
+    # Imprimir el tiempo total en segundos
+    print(f"Tiempo total: {t_total:.6f} segundos")
 
 if __name__ == "__main__":
     main()
